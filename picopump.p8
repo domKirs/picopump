@@ -2,8 +2,23 @@ pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
 
-local physics = {}
-physics.world = {}
+local Physics = {}
+Physics.world = {}
+
+function Account:newRectangle(x, y, w, h, gravity)
+    local o = {}
+    o.x, o.y = x, y
+    o.w, o.h = w, h
+    o.gravity = gravity
+    o.airTimer = 0
+    o.isGrounded = true
+
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+
 
 
 
