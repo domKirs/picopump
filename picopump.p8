@@ -3,9 +3,10 @@ version 18
 __lua__
 
 local Physics = {}
+Physics.__index = Physics
 Physics.world = {}
 
-function Account:newRectangle(x, y, w, h, gravity)
+function Physics:newRectangle(x, y, w, h, gravity)
     local o = {}
     o.x, o.y = x, y
     o.w, o.h = w, h
@@ -13,14 +14,37 @@ function Account:newRectangle(x, y, w, h, gravity)
     o.airTimer = 0
     o.isGrounded = true
 
-    setmetatable(o, self)
-    self.__index = self
-    return o
+    return setmetatable(o, self)
 end
 
+function Physics:addToWorld(name)
+    Physics.world[name] = self
+end
 
+function Physics.deleteFromWorld(name)
+    Physics.world[name] = nil
+end
 
+function Physics.drawBounds()
+    for _, o in pairs(Physics.world) do
+        rect(o.x, o.y, o.x + o.w, o.y + o.h, 8)
+    end
+end
 
+player = Physics:newRectangle(50, 50, 10, 10, 5)
+
+function _init()
+    player:addToWorld('hero')
+end
+
+function _update60() 
+
+end
+
+function _draw()
+    cls()
+    player.drawBounds()
+end
 
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
