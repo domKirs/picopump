@@ -7,22 +7,23 @@ Physics.__index = Physics
 Physics.world = {}
 
 function Physics:newRectangle(x, y, w, h, gravity)
-    local o = {}
+    local o = setmetatable({}, self)
+    o.__index  = o
     o.x, o.y = x, y
     o.w, o.h = w, h
     o.gravity = gravity
     o.airTimer = 0
     o.isGrounded = true
 
-    return setmetatable(o, self)
+    return o
 end
 
-function Physics:addToWorld(name)
-    Physics.world[name] = self
+function Physics:addToWorld()
+    Physics.world[self.name] = self
 end
 
-function Physics.deleteFromWorld(name)
-    Physics.world[name] = nil
+function Physics:deleteFromWorld()
+    Physics.world[self.name] = nil
 end
 
 function Physics.drawBounds()
@@ -31,10 +32,26 @@ function Physics.drawBounds()
     end
 end
 
-player = Physics:newRectangle(50, 50, 10, 10, 5)
+local Player = {}
+Player.__index = Player
+
+function Player:newPlayer(name, Rec2d)
+    setmetatable(self, Rec2d)
+    local player = setmetatable({}, self)
+    player.name = name
+    return player
+end
+
+function Player:sayName()
+    print(self.name)
+end
+
+player = Player:newPlayer('HERO', Physics:newRectangle(50, 50, 10, 10, 6))
 
 function _init()
-    player:addToWorld('hero')
+    player:sayName()
+    print(player.x)
+    player:addToWorld()
 end
 
 function _update60() 
