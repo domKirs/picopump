@@ -6,16 +6,38 @@ local Physics = {}
 Physics.__index = Physics
 Physics.world = {}
 
-function Physics:newRec2D(x, y, w, h, gravity)
+function Physics:newRect2D(x, y, w, h, g)
     local o = setmetatable({}, self)
     o.__index  = o
-    o.x, o.y = x, y
-    o.w, o.h = w, h
-    o.gravity = gravity
+    o.x, o.y, o.w, o.h = x, y, w, h
+    o.gravity = g
     o.airTimer = 0
     o.isGrounded = true
+    o.forceX, o.forceY = 0, 0
 
     return o
+end
+
+function Physics:setForce(forceX, forceY)
+    if forceX ~= nil and forceX ~= 0 
+    then
+        self.forceX = forceX
+    end
+    if forceY ~= nil and forceY ~= 0
+    then
+        self.forceY = forceY
+    end
+end
+
+function Physics:addForce(forceX, forceY)
+    if forceX ~= nil and forceX ~= 0
+    then
+        self.forceX = self.forceX + forceX
+    end
+    if forceY ~= nil and forceY ~= 0
+    then
+        self.forceY = self.forceY + (-1)*forceY 
+    end
 end
 
 function Physics:addToWorld(name)
@@ -38,22 +60,23 @@ Player.__index = Player
 function Player:newPlayer(name, x, y, w, h, g)
     local player = setmetatable({}, self)
     player.name = name
-    player.rec2D = Physics:newRec2D(x, y, w, h, g)
+    player.sprite = "▥"
+    player.rect2D = Physics:newRect2D(x, y, w, h, g)
 
     return player
 end
 
 function Player:drawBounds()
-    self.rec2D.drawBounds()
+    self.rect2D.drawBounds()
 end
 
 function Player:addToWorld()
-    self.rec2D:addToWorld(self.name)
+    self.rect2D:addToWorld(self.name)
 end
 
 function Player:killPlayer()
-    self.rec2D.deleteFromWorld(self.name)
-    self.rec2D = nil
+    self.rect2D.deleteFromWorld(self.name)
+    self.rect2D = nil
 end
 
 function Player:sayName()
@@ -68,9 +91,6 @@ function _init()
     player:sayName()
     player:drawBounds()
     print("-> " .. Physics.world["HERO"].x)
-    print(player.rec2D.x)
-    player:killPlayer()
-    player:sayName()
 end
 
 function _update60() 
