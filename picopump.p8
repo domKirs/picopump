@@ -6,7 +6,7 @@ local Physics = {}
 Physics.__index = Physics
 Physics.world = {}
 
-function Physics:newRectangle(x, y, w, h, gravity)
+function Physics:newRec2D(x, y, w, h, gravity)
     local o = setmetatable({}, self)
     o.__index  = o
     o.x, o.y = x, y
@@ -18,12 +18,13 @@ function Physics:newRectangle(x, y, w, h, gravity)
     return o
 end
 
-function Physics:addToWorld()
-    Physics.world[self.name] = self
+function Physics:addToWorld(name)
+    Physics.world[name] = self
 end
 
-function Physics:deleteFromWorld()
-    Physics.world[self.name] = nil
+function Physics:deleteFromWorld(name)
+    Physics.world[name] = nil
+    self = nil
 end
 
 function Physics.drawBounds()
@@ -35,22 +36,34 @@ end
 local Player = {}
 Player.__index = Player
 
-function Player:newPlayer(name, Rec2d)
-    setmetatable(self, Rec2d)
+function Player:newPlayer(name, x, y, w, h, g)
     local player = setmetatable({}, self)
     player.name = name
+    player.rec2D = Physics:newRec2D(x, y, w, h, g)
+
     return player
+end
+
+function Player:drawBounds()
+    self.rec2D.drawBounds()
+end
+
+function Player:addToWorld()
+    self.rec2D:addToWorld(self.name)
+end
+
+function Player:killPlayer()
+    self.rec2D.deleteFromWorld(self.name)
+    self = nil
 end
 
 function Player:sayName()
     print(self.name)
 end
 
-player = Player:newPlayer('HERO', Physics:newRectangle(50, 50, 10, 10, 6))
+player = Player:newPlayer('HERO', 50, 50, 10, 10, 6)
 
 function _init()
-    player:sayName()
-    print(player.x)
     player:addToWorld()
 end
 
@@ -60,7 +73,9 @@ end
 
 function _draw()
     cls()
-    player.drawBounds()
+    player:sayName()
+    print(player.rec2D.x)
+    player:drawBounds()
 end
 
 __gfx__
