@@ -6,7 +6,7 @@ local Physics = {}
 Physics.__index = Physics
 Physics.world = {}
 
-function Physics:newRect2D(x, y, w, h, g)
+function Physics:newPhysicsObj(x, y, w, h, g)
     local o = setmetatable({}, self)
     o.__index  = o
     o.x, o.y, o.w, o.h = x, y, w, h
@@ -45,8 +45,7 @@ end
 function Physics:applyGravity()
     local next_py = self.y
     
-    if self.is_grounded == false and
-       self.air_timer <= 0
+    if self.is_grounded == false and self.air_timer <= 0
     then
         next_py = next_py + self.gravity
     end
@@ -79,7 +78,7 @@ function Player:newPlayer(name, x, y, w, h, g)
     local player = setmetatable({}, self)
     player.name = name
     player.sprite = "▥"
-    player.rect2D = Physics:newRect2D(x, y, w, h, g)
+    player.rect2D = Physics:newPhysicsObj(x, y, w, h, g)
 
     return player
 end
