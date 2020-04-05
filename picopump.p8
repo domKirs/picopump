@@ -11,8 +11,8 @@ function Physics:newRect2D(x, y, w, h, g)
     o.__index  = o
     o.x, o.y, o.w, o.h = x, y, w, h
     o.gravity = g
-    o.airTimer = 0
-    o.isGrounded = true
+    o.air_timer = -1
+    o.is_grounded = false
     o.forceX, o.forceY = 0, 0
 
     return o
@@ -23,6 +23,7 @@ function Physics:setForce(v2D)
     then
         self.forceX = v2D.forceX
     end
+
     if v2D.forceY ~= nil and v2D.forceY ~= 0
     then
         self.forceY = v2D.forceY
@@ -34,10 +35,23 @@ function Physics:addForce(v2D)
     then
         self.forceX = self.forceX + v2D.forceX
     end
+
     if v2D.forceY ~= nil and v2D.forceY ~= 0
     then
         self.forceY = self.forceY + (-1) * v2D.forceY 
     end
+end
+
+function Physics:applyGravity()
+    local next_py = self.y
+    
+    if self.is_grounded == false and
+       self.air_timer <= 0
+    then
+        next_py = next_py + self.gravity
+    end
+
+    self.y = next_py
 end
 
 function Physics:update()
@@ -83,26 +97,24 @@ function Player:killPlayer()
     self.rect2D = nil
 end
 
-function Player:sayName()
-    print(self.name)
+function Player:applyGravity()
+    self.rect2D:applyGravity()
 end
 
-player = Player:newPlayer('HERO', 50, 50, 10, 10, 6)
 
 function _init()
     cls()
-    player:addToWorld()
-    player:sayName()
-    player:drawBounds()
-    print("-> " .. Physics.world["HERO"].x)
+    hero = Player:newPlayer('HERO', 50, 50, 10, 10, 1)
+    hero:addToWorld()
 end
 
 function _update60() 
-
+    hero:applyGravity()
 end
 
 function _draw()
-    -- cls()
+    cls()
+    hero:drawBounds()
 end
 
 __gfx__
