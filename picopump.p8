@@ -22,9 +22,8 @@ function Physics:addToWorld(name)
     Physics.world[name] = self
 end
 
-function Physics:deleteFromWorld(name)
+function Physics.deleteFromWorld(name)
     Physics.world[name] = nil
-    self = nil
 end
 
 function Physics.drawBounds()
@@ -54,7 +53,7 @@ end
 
 function Player:killPlayer()
     self.rec2D.deleteFromWorld(self.name)
-    self = nil
+    self.rec2D = nil
 end
 
 function Player:sayName()
@@ -64,7 +63,14 @@ end
 player = Player:newPlayer('HERO', 50, 50, 10, 10, 6)
 
 function _init()
+    cls()
     player:addToWorld()
+    player:sayName()
+    player:drawBounds()
+    print("-> " .. Physics.world["HERO"].x)
+    print(player.rec2D.x)
+    player:killPlayer()
+    player:sayName()
 end
 
 function _update60() 
@@ -72,10 +78,7 @@ function _update60()
 end
 
 function _draw()
-    cls()
-    player:sayName()
-    print(player.rec2D.x)
-    player:drawBounds()
+    -- cls()
 end
 
 __gfx__
