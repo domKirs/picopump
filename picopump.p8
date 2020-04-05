@@ -18,26 +18,30 @@ function Physics:newRect2D(x, y, w, h, g)
     return o
 end
 
-function Physics:setForce(forceX, forceY)
-    if forceX ~= nil and forceX ~= 0 
+function Physics:setForce(v2D)
+    if v2D.forceX ~= nil and v2D.forceX ~= 0 
     then
-        self.forceX = forceX
+        self.forceX = v2D.forceX
     end
-    if forceY ~= nil and forceY ~= 0
+    if v2D.forceY ~= nil and v2D.forceY ~= 0
     then
-        self.forceY = forceY
+        self.forceY = v2D.forceY
     end
 end
 
-function Physics:addForce(forceX, forceY)
-    if forceX ~= nil and forceX ~= 0
+function Physics:addForce(v2D)
+    if v2D.forceX ~= nil and v2D.forceX ~= 0
     then
-        self.forceX = self.forceX + forceX
+        self.forceX = self.forceX + v2D.forceX
     end
-    if forceY ~= nil and forceY ~= 0
+    if v2D.forceY ~= nil and v2D.forceY ~= 0
     then
-        self.forceY = self.forceY + (-1)*forceY 
+        self.forceY = self.forceY + (-1) * v2D.forceY 
     end
+end
+
+function Physics:update()
+
 end
 
 function Physics:addToWorld(name)
